@@ -132,6 +132,88 @@ function calcGrade(score) {
   return { grade: 'F', level: 'Critical' };
 }
 
+// Helper to format recommendations into a readable multi-line string.
+function formatRecommendation(rec) {
+  if (!rec && rec !== 0) return '';
+  // If an array of lines/blocks is provided, join with a blank line between blocks.
+  if (Array.isArray(rec)) {
+    return rec.map(r => String(r).trim()).filter(Boolean).join('\n\n');
+  }
+  // Otherwise coerce to string and tidy up spacing and newlines.
+  let s = String(rec).trim();
+  s = s.replace(/\r\n/g, '\n');
+  s = s.replace(/\n{3,}/g, '\n\n');
+  s = s.replace(/\t+/g, '  ');
+  return s;
+}
+
+// Heuristically expand short/plain recommendations into a more structured, user-friendly format.
+function enhanceRecommendation(rec, ctx = {}) {
+  if (!rec) return rec;
+  if (Array.isArray(rec)) return rec; // already structured
+  const s = String(rec).trim();
+  // If already multi-line or long, don't attempt to enrich
+  if (s.includes('\n') || s.length > 240) return s;
+
+  const parts = s.split(/\.\s+/);
+  const summary = parts[0].replace(/\.$/, '');
+
+  const steps = [];
+  // Heuristics for common actions
+  const lowered = s.toLowerCase();
+  if (lowered.includes('block port') || lowered.includes('block port') || lowered.includes('block')) {
+    steps.push('Identify the network boundary or firewall controlling incoming traffic.');
+    steps.push('Create a firewall rule to block the specific port (example commands below).');
+    steps.push('Verify the port is closed from an external network and monitor for related traffic.');
+  } else if (lowered.includes('enable') && (lowered.includes('hsts') || lowered.includes('strict-transport-security') || lowered.includes('https'))) {
+    steps.push('Install or renew a TLS certificate (Let\'s Encrypt is a free option).');
+    steps.push('Configure your web server to redirect HTTP → HTTPS and add the HSTS header.');
+    steps.push('Test redirects and header presence from multiple locations.');
+  } else if (lowered.includes('content-security-policy') || lowered.includes('csp')) {
+    steps.push('Start with a restrictive CSP: default-src \'self\'; script-src \'self\';');
+    steps.push('Allowlist any external domains you explicitly use (CDNs, analytics).');
+    steps.push('Deploy in report-only mode first to tune the policy.');
+  } else if (lowered.includes('remove') || lowered.includes('delete') || lowered.includes('remove .env')) {
+    steps.push('Immediately remove the sensitive file from the web root.');
+    steps.push('Ensure the file is included in .gitignore and rotate any credentials found.');
+    steps.push('Move secrets to environment variables or a secrets manager.');
+  } else {
+    steps.push('Review the recommendation and identify the responsible system (web server, firewall, application).');
+    steps.push('Apply the recommended change in a staging environment first.');
+    steps.push('Deploy to production and verify the change with a follow-up scan.');
+  }
+
+  // Examples based on keywords
+  const examples = [];
+  if (lowered.includes('block') || lowered.match(/port\s+\d+/)) {
+    examples.push('UFW (Ubuntu): sudo ufw deny 445/tcp');
+    examples.push('iptables: sudo iptables -A INPUT -p tcp --dport 445 -j DROP');
+  }
+  if (lowered.includes('.git')) {
+    examples.push('Nginx: location ~ /\\.git { deny all; }');
+  }
+  if (lowered.includes('let\'s encrypt') || lowered.includes('certbot') || lowered.includes('https')) {
+    examples.push('Certbot (nginx): sudo certbot --nginx -d yourdomain.com');
+  }
+
+  const difficulty = (ctx.severity === 'critical' || ctx.severity === 'high') ? 'High' : (ctx.severity === 'medium' ? 'Medium' : 'Low');
+  const est = difficulty === 'High' ? '30-120 minutes' : (difficulty === 'Medium' ? '15-60 minutes' : '5-30 minutes');
+
+  const out = [];
+  out.push(`Summary: ${summary}`);
+  out.push('Steps:');
+  steps.forEach((st, i) => out.push(`${i + 1}. ${st}`));
+  if (examples.length) {
+    out.push('Example commands:');
+    examples.forEach(cmd => out.push(cmd));
+  }
+  out.push(`Difficulty: ${difficulty}`);
+  out.push(`Estimated time: ${est}`);
+  out.push('Tip: Test changes in staging and monitor after deployment.');
+
+  return out.join('\n\n');
+}
+
 // ─── Main scanner ─────────────────────────────────────────────────────────────
 async function runScan(scanRecord, onProgress) {
   const findings = [];
@@ -141,8 +223,21 @@ async function runScan(scanRecord, onProgress) {
   const openPorts = [];
   const technologies = new Set();
 
-  // Helper to add a finding
-  const addFinding = (data) => findings.push({ id: uuidv4(), ...data });
+  // Helper to add a finding. Automatically formats recommendation text/arrays.
+  const addFinding = (data) => {
+    const entry = { ...data };
+    if (entry && entry.recommendation !== undefined) {
+      try {
+        if (typeof entry.recommendation === 'string') {
+          entry.recommendation = enhanceRecommendation(entry.recommendation, { severity: entry.severity });
+        }
+        entry.recommendation = formatRecommendation(entry.recommendation);
+      } catch (e) {
+        // If formatting fails, keep original value
+      }
+    }
+    findings.push({ id: uuidv4(), ...entry });
+  };
 
   // ── Phase 1: Initial HTTP fetch ────────────────────────────────────────────
   await onProgress(5, 'Connecting to target server...', 'Reconnaissance');

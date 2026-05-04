@@ -1,0 +1,89 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --ink-0:    #060810;
+  --ink-1:    #0a0e1a;
+  --ink-2:    #0d1020;
+  --ink-3:    #111428;
+  --ink-4:    #171c35;
+  --ink-5:    #1e2444;
+  --ink-6:    #252c52;
+
+  /* Text */
+  --text-1:   #e2e4f0;
+  --text-2:   #9098c0;
+  --text-3:   #545c88;
+  --text-4:   #353d64;
+
+  /* Accent – electric indigo */
+  --accent:       #5b73ff;
+  --accent-dim:   rgba(91, 115, 255, 0.15);
+  --accent-glow:  rgba(91, 115, 255, 0.35);
+
+  /* Severity */
+  --crit:         #ff3a5c;
+  --crit-bg:      rgba(255, 58, 92, 0.08);
+  --crit-border:  rgba(255, 58, 92, 0.22);
+  --high:         #ff6b35;
+  --high-bg:      rgba(255, 107, 53, 0.08);
+  --high-border:  rgba(255, 107, 53, 0.22);
+  --med:          #f5a623;
+  --med-bg:       rgba(245, 166, 35, 0.08);
+  --med-border:   rgba(245, 166, 35, 0.22);
+  --low:          #36d4b7;
+  --low-bg:       rgba(54, 212, 183, 0.08);
+  --low-border:   rgba(54, 212, 183, 0.22);
+  --info:         #7b8fff;
+  --info-bg:      rgba(123, 143, 255, 0.08);
+  --safe:         #2ed57a;
+  --safe-bg:      rgba(46, 213, 122, 0.08);
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Outfit', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* Borders */
+  --border-1:     rgba(255, 255, 255, 0.05);
+  --border-2:     rgba(255, 255, 255, 0.09);
+  --border-3:     rgba(255, 255, 255, 0.14);
+
+  /* Radius */
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  24px;
+
+  /* Shadows */
+  --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md:  0 4px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg:  0 8px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────────────────── */
+@keyframes fadeUp    { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
+@keyframes spin      { to { transform: rotate(360deg); } }
+@keyframes pulse     { 0%,100% { opacity:1; } 50% { opacity:0.45; } }
+@keyframes scanBeam  { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+@keyframes ripple    { 0% { transform:scale(0.8); opacity:0.6; } 100% { transform:scale(2.2); opacity:0; } }
+@keyframes gradShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+@keyframes blink     { 0%,100% { opacity:1; } 50% { opacity:0; } }
+@keyframes slideIn   { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:translateX(0); } }
+@keyframes countUp   { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+@keyframes shimmer   {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+/* ── Utility classes ────────────────────────────────────────────────────────── */
+.fade-up   { animation: fadeUp  0.45s cubic-bezier(0.16,1,0.3,1) both; }
+.fade-in   { animation: fadeIn  0.3s ease both; }
+.spin-anim { animation: spin    0.8s linear infinite; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--ink-3) 25%, var(--ink-4) 50%, var(--ink-3) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--r-sm);
+}

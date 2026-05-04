@@ -1,7 +1,7 @@
 {
-  "name": "vulnscan-backend",
+  "name": "scantinel-backend",
   "version": "2.0.0",
-  "description": "VulnScan Security Intelligence Platform - Backend API",
+  "description": "Scantinel Security Intelligence Platform - Backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -1,13 +1,71 @@
-# VulnScan — Security Intelligence Platform v2.0
+# Scantinel — Security Intelligence Platform v2.0
 
 Professional web-based vulnerability scanner with real-time progress tracking, interactive dashboard, and PDF export.
+## Project Structure
 
+```
+scantinel/
+├── backend/
+│   ├── models/
+│   │   └── Scan.js              # Mongoose schema (findings, ports, summary)
+└── frontend/
+    ├── public/
+    │   └── index.html
+## Setup
+
+### Requirements
+- Node.js 18+
+- MongoDB (local or Atlas)
+
+### 1. Backend
+```bash
+cd backend
+npm install
+# Edit .env if needed (MONGO_URI, PORT)
+npm run dev
+# → http://localhost:5000
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+# → http://localhost:3000
+
+---
+## Security Checks (10 Phases)
+| Phase | Check |
+|---|---|
+| Reconnaissance | HTTP reachability, technology detection |
+| Risk Assessment | Score calculation, grade assignment (A-F) |
+
+---
+## API Endpoints
+| Method | Path | Description |
+|---|---|---|
+| POST | /api/scans | Start a scan |
+| GET | /api/scans/:id/report | Download JSON report |
+| DELETE | /api/scans/:id | Delete a scan |
+| GET | /api/health | Health check |
+## Extending with Nmap / Nikto
+
+To add real Nmap integration, install Nmap system-wide and replace the TCP connect scan in `scanner.js`:
+```bash
+npm install node-nmap --save   # backend only
+```
+Then use `nmap.quickScan(hostname, ...)` in the port scanning phase.
+
+---
+## Notes
+- Port scanning uses native Node.js TCP connect — no binary dependencies
+- SSE provides real-time scan progress without polling
+- All findings include CVSS scores, CWE IDs, plain-language descriptions, and fix recommendations
+- Rate limited to 20 scans per 15 minutes per IP
 ---
 
 ## Project Structure
 
 ```
-vulnscan/
+scantinel/
 ├── backend/
 │   ├── models/
 │   │   └── Scan.js              # Mongoose schema (findings, ports, summary)

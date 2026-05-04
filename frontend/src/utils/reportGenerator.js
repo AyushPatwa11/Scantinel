@@ -60,7 +60,7 @@ export function generatePDFReport(scan) {
   setFont(doc, C.accent);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('VULNSCAN', M, 20);
+  doc.text('SCANTINEL', M, 20);
   setFont(doc, C.text3);
   doc.setFontSize(7.5);
   doc.setFont('helvetica', 'normal');
@@ -180,7 +180,7 @@ export function generatePDFReport(scan) {
     setFont(doc, C.accent);
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'bold');
-    doc.text('VULNSCAN', M, 10);
+    doc.text('SCANTINEL', M, 10);
 
     setFont(doc, C.text1);
     doc.setFontSize(16);
@@ -237,7 +237,7 @@ export function generatePDFReport(scan) {
     setFont(doc, C.accent);
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'bold');
-    doc.text('VULNSCAN', M, 10);
+    doc.text('SCANTINEL', M, 10);
 
     setFont(doc, C.text1);
     doc.setFontSize(16);
@@ -336,9 +336,9 @@ export function generatePDFReport(scan) {
     setFont(doc, C.text3);
     doc.setFontSize(6.5);
     doc.setFont('helvetica', 'normal');
-    doc.text(`VulnScan Security Report  ·  ${scan.url}  ·  Page ${i} of ${total}`, W / 2, 290, { align: 'center' });
+    doc.text(`Scantinel Security Report  ·  ${scan.url}  ·  Page ${i} of ${total}`, W / 2, 290, { align: 'center' });
   }
 
-  const filename = `VulnScan-${scan.url.replace(/[^a-z0-9]/gi, '-').slice(0, 40)}-${Date.now()}.pdf`;
+  const filename = `Scantinel-${scan.url.replace(/[^a-z0-9]/gi, '-').slice(0, 40)}-${Date.now()}.pdf`;
   doc.save(filename);
 }

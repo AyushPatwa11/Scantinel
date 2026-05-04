@@ -126,7 +126,7 @@ router.delete('/:id', asyncHandler(async (req, res) => {
 router.get('/:id/report', asyncHandler(async (req, res) => {
   const scan = await Scan.findOne({ scanId: req.params.id }).lean();
   if (!scan) return res.status(404).json({ error: 'Scan not found' });
-  res.setHeader('Content-Disposition', `attachment; filename="vulnscan-${scan.scanId}.json"`);
+  res.setHeader('Content-Disposition', `attachment; filename="scantinel-${scan.scanId}.json"`);
   res.json({ reportVersion: '2.0', generatedAt: new Date(), scan });
 }));
 

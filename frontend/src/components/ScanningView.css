@@ -1,0 +1,237 @@
+.scanning-view {
+  display: flex;
+  min-height: calc(100vh - 57px);
+  align-items: stretch;
+}
+
+/* ── Left panel ───────────────────────────────────────────────────────────────── */
+.scanning-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  border-right: 1px solid var(--border-1);
+  gap: 40px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(91,115,255,0.05) 0%, transparent 65%);
+}
+
+/* ── Radar ────────────────────────────────────────────────────────────────────── */
+.radar-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.radar-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,115,255,0.06) 0%, transparent 70%);
+  border: 1px solid rgba(91,115,255,0.1);
+}
+
+.radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(91,115,255,0.15);
+  animation: ripple 3s ease-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+.radar-ring:nth-child(2) { inset: 20%; }
+.radar-ring:nth-child(3) { inset: 38%; }
+.radar-ring:nth-child(4) { inset: 56%; }
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(91,115,255,0.4) 0deg, rgba(91,115,255,0.15) 60deg, transparent 90deg);
+  animation: scanBeam 2.5s linear infinite;
+}
+
+.radar-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+.radar-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim), 0 0 20px var(--accent-glow);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Blips */
+.blip {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--crit);
+  box-shadow: 0 0 6px var(--crit);
+  animation: pulse 2s ease-in-out infinite;
+}
+.blip-1 { top: 22%; left: 58%; animation-delay: 0.3s;  }
+.blip-2 { top: 55%; left: 28%; animation-delay: 0.9s;  background: var(--med); box-shadow: 0 0 6px var(--med); }
+.blip-3 { top: 72%; left: 65%; animation-delay: 1.5s;  background: var(--low); box-shadow: 0 0 6px var(--low); }
+
+/* ── URL display ─────────────────────────────────────────────────────────────── */
+.scanning-url {
+  text-align: center;
+  max-width: 400px;
+}
+.scan-prefix {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.scan-target {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+/* ── Progress ────────────────────────────────────────────────────────────────── */
+.progress-wrap { width: 100%; max-width: 380px; }
+
+.progress-track {
+  position: relative;
+  height: 3px;
+  background: var(--ink-5);
+  border-radius: 99px;
+  overflow: visible;
+  margin-bottom: 10px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, #a78bfa 100%);
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.progress-glow {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-glow);
+  transition: left 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.current-step {
+  font-size: 12px;
+  color: var(--text-2);
+  font-style: italic;
+  min-height: 18px;
+}
+.progress-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Right panel ─────────────────────────────────────────────────────────────── */
+.scanning-right {
+  width: 380px;
+  flex-shrink: 0;
+  padding: 40px 32px;
+  overflow-y: auto;
+}
+
+.steps-heading {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 20px;
+}
+
+.steps-list { display: flex; flex-direction: column; gap: 4px; }
+
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  transition: background 0.2s;
+  animation: slideIn 0.3s ease both;
+}
+.step-row.done    { }
+.step-row.current { background: var(--ink-3); }
+.step-row.pending { opacity: 0.4; }
+
+.step-indicator { flex-shrink: 0; margin-top: 2px; }
+
+.step-active-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--accent-dim);
+  position: relative;
+}
+.step-active-dot::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+.step-pending-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--text-4);
+}
+
+.step-content { flex: 1; min-width: 0; }
+.step-phase {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+.step-label { font-size: 12.5px; color: var(--text-2); }
+.step-row.current .step-label { color: var(--text-1); }
+.step-row.done .step-phase    { color: var(--safe); opacity: 0.7; }
+
+.step-badge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(91,115,255,0.2);
+  padding: 2px 7px;
+  border-radius: 99px;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .scanning-view { flex-direction: column; }
+  .scanning-left  { border-right: none; border-bottom: 1px solid var(--border-1); padding: 40px 24px; }
+  .scanning-right { width: 100%; padding: 24px 18px; }
+  .radar-wrap     { width: 160px; height: 160px; }
+}

@@ -1,0 +1,56 @@
+.tech-panel {
+  background: var(--ink-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+}
+
+.tech-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-3);
+}
+
+.tech-count {
+  font-size: 10px;
+  background: var(--ink-4);
+  color: var(--text-4);
+  padding: 1px 7px;
+  border-radius: 99px;
+  margin-left: auto;
+}
+
+.tech-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--ink-3);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-1);
+  transition: border-color 0.15s;
+}
+.tech-chip:hover { border-color: var(--tc); }
+
+.tech-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--tc);
+  box-shadow: 0 0 6px var(--tc);
+  flex-shrink: 0;
+}

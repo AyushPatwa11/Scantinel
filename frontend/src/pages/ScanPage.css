@@ -1,0 +1,94 @@
+.scan-page {
+  min-height: 100vh;
+  background: var(--ink-0);
+}
+
+.scan-nav {
+  display: flex;
+  align-items: center;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border-1);
+  background: rgba(6,8,16,0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  padding: 7px 14px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.nav-back:hover { color: var(--text-1); border-color: var(--border-3); }
+
+.scan-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  flex-shrink: 0;
+}
+
+.scan-nav-url {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+/* Loading state */
+.scan-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 57px);
+  gap: 16px;
+  color: var(--text-3);
+}
+.scan-loading-spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--ink-5);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Error state */
+.scan-error-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 57px);
+  gap: 16px;
+  text-align: center;
+  padding: 32px;
+}
+.scan-error-icon { font-size: 48px; }
+.scan-error-view h2 { font-family: var(--font-display); font-size: 24px; color: var(--text-1); }
+.scan-error-view p  { color: var(--text-2); max-width: 400px; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .scan-nav { padding: 12px 16px; }
+  .scan-nav-url { display: none; }
+}

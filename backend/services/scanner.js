@@ -99,7 +99,7 @@ async function httpGet(url, opts = {}) {
       maxRedirects: opts.maxRedirects !== undefined ? opts.maxRedirects : 5,
       validateStatus: () => true,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; VulnScan/2.0; Security-Audit)',
+        'User-Agent': 'Mozilla/5.0 (compatible; Scantinel/2.0; Security-Audit)',
         ...opts.headers
       },
       ...opts

@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 });
 
 // ── Database + start ───────────────────────────────────────────────────────────
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vulnscan';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/scantinel';
 const PORT = parseInt(process.env.PORT) || 5000;
 
 mongoose
@@ -63,7 +63,7 @@ mongoose
   .then(() => {
     console.log(`✓ MongoDB connected: ${MONGO_URI}`);
     app.listen(PORT, () => {
-      console.log(`✓ VulnScan API running on http://localhost:${PORT}`);
+      console.log(`✓ Scantinel API running on http://localhost:${PORT}`);
       console.log(`  Health: http://localhost:${PORT}/api/health`);
     });
   })

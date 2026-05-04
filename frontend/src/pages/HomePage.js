@@ -84,9 +84,9 @@ export default function HomePage({ onScanStart }) {
 
       {/* Nav */}
       <nav className="home-nav">
-        <div className="nav-brand">
+          <div className="nav-brand">
           <div className="brand-icon"><Shield size={16} /></div>
-          <span className="brand-name">VulnScan</span>
+          <span className="brand-name">Scantinel</span>
         </div>
         <div className="nav-meta">Security Intelligence Platform</div>
       </nav>

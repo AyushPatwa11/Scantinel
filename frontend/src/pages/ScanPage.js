@@ -18,7 +18,7 @@ export default function ScanPage({ scanId, onBack }) {
         </button>
         <div className="scan-nav-brand">
           <Shield size={14} color="var(--accent)" />
-          <span>VulnScan</span>
+          <span>Scantinel</span>
         </div>
         <div className="scan-nav-url">
           {scan?.url || ''}

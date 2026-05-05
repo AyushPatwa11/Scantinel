@@ -8,7 +8,6 @@ import {
   Lock, Eye, Server, FileWarning, Wifi
 } from 'lucide-react';
 import './HomePage.css';
-
 const FEATURES = [
   { icon: Lock,        label: 'SSL / TLS Verification'      },
   { icon: Shield,      label: 'Security Header Analysis'     },
@@ -27,19 +26,21 @@ const SCAN_PHASES = [
 ];
 
 export default function HomePage({ onScanStart }) {
-  const [url, setUrl]             = useState('');
+  const [url, setUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError]         = useState('');
-  const [history, setHistory]     = useState([]);
+  const [error, setError] = useState('');
+  const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    let mounted = true;
     getScans(8)
-      .then(setHistory)
+      .then(data => { if (mounted) setHistory(data); })
       .catch(() => {})
-      .finally(() => setHistoryLoading(false));
+      .finally(() => mounted && setHistoryLoading(false));
+    return () => { mounted = false; };
   }, []);
 
   async function handleSubmit(e) {
@@ -53,8 +54,8 @@ export default function HomePage({ onScanStart }) {
       toast({ message: 'Scan started successfully!', type: 'success' });
       onScanStart(scanId);
     } catch (err) {
-      setError(err.message);
-      toast({ message: err.message, type: 'error' });
+      setError(err.message || 'Failed to start scan');
+      toast({ message: err.message || 'Failed to start scan', type: 'error' });
       setSubmitting(false);
     }
   }
@@ -184,8 +185,8 @@ export default function HomePage({ onScanStart }) {
               <div
                 key={scan.scanId}
                 className="history-card fade-up"
-                style={{ animationDelay: `${i * 0.05}s` }}
-                onClick={() => onScanStart(scan.scanId)}
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                  onClick={() => onScanStart(scan.scanId)}
               >
                 <div className="hc-left">
                   <div className="hc-url">{scan.url}</div>

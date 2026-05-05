@@ -10,14 +10,13 @@
     "recharts": "^2.10.0",
     "lucide-react": "^0.383.0",
     "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.7.1",
-    "framer-motion": "^10.16.16"
+    "jspdf-autotable": "^3.7.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
-  "proxy": "http://localhost:5001",
+  "proxy": "http://localhost:5000",
   "browserslist": {
     "production": [">0.2%", "not dead", "not op_mini all"],
     "development": ["last 1 chrome version", "last 1 firefox version"]

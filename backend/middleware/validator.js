@@ -3,7 +3,7 @@
  * Ensures URL is present, is a string, and resembles a valid hostname or URL.
  */
 function validateScanRequest(req, res, next) {
-  const { url } = req.body;
+  const { url } = req.body || {};
 
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'URL is required and must be a string.' });

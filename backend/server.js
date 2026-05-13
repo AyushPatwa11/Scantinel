@@ -9,6 +9,9 @@ const scanRoutes = require('./routes/scans');
 
 const app = express();
 
+// If running behind a proxy (nginx, Docker, cloud), enable trust proxy
+app.set('trust proxy', true);
+
 // ── Security middleware ────────────────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({
@@ -27,11 +30,15 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
-app.use('/api/scans', limiter);
-
 // ── Body parsing ───────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false }));
+
+// ── Rate limiting (apply only to POST scan requests) ─────────────────────────────
+app.use('/api/scans', (req, res, next) => {
+  if (req.method === 'POST') return limiter(req, res, next);
+  return next();
+});
 
 // ── Routes ─────────────────────────────────────────────────────────────────────
 app.use('/api/scans', scanRoutes);

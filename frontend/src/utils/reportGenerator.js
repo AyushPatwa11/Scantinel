@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const C = {
   bg:     [6,   8,  16],
@@ -195,7 +195,7 @@ export function generatePDFReport(scan) {
       p.risk?.toUpperCase() || 'UNKNOWN'
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: y,
       head: [['PORT', 'PROTO', 'SERVICE', 'STATE', 'RISK LEVEL']],
       body: portRows,

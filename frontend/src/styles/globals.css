@@ -1,4 +1,5 @@
 /* ── Design tokens ──────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
 :root {
   /* Core palette */
   --ink-0:    #060810;

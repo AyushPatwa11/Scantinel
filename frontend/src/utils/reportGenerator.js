@@ -1,5 +1,9 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable, { applyPlugin } from 'jspdf-autotable';
+
+// Apply the autotable plugin to jsPDF so doc.lastAutoTable is always set
+applyPlugin(jsPDF);
+
 
 const C = {
   bg:     [6,   8,  16],
@@ -227,7 +231,7 @@ export function generatePDFReport(scan) {
         }
       }
     });
-    y = doc.lastAutoTable.finalY + 12;
+    y = (doc.lastAutoTable?.finalY ?? y) + 12;
   }
 
   // ── Pages 3+: Findings ─────────────────────────────────────────────────────
@@ -339,6 +343,20 @@ export function generatePDFReport(scan) {
     doc.text(`Scantinel Security Report  ·  ${scan.url}  ·  Page ${i} of ${total}`, W / 2, 290, { align: 'center' });
   }
 
-  const filename = `Scantinel-${scan.url.replace(/[^a-z0-9]/gi, '-').slice(0, 40)}-${Date.now()}.pdf`;
-  doc.save(filename);
+  const filename = `Scantinel-${(scan.url || 'report').replace(/[^a-z0-9]/gi, '-').slice(0, 40)}-${Date.now()}.pdf`;
+
+  // Explicit blob download — works reliably across all jsPDF versions
+  try {
+    const blob   = doc.output('blob');
+    const blobUrl = URL.createObjectURL(blob);
+    const link    = document.createElement('a');
+    link.href     = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 200);
+  } catch {
+    doc.save(filename); // fallback
+  }
 }

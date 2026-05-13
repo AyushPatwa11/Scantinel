@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import lottie from 'lottie-web';
+import radarAnimation from './radar-lottie.json';
 import './ScanningView.css';
 
 const ALL_STEPS = [
@@ -11,36 +13,43 @@ const ALL_STEPS = [
   { phase: 'Exposed Resources',   label: 'Scanning for exposed sensitive files'    },
   { phase: 'Port Scanning',       label: 'Scanning network ports and services'     },
   { phase: 'Content Security',    label: 'Analyzing content and form security'     },
-  { phase: 'Risk Assessment',     label: 'Calculating security risk score'         }
+  { phase: 'Risk Assessment',     label: 'Calculating security risk score'         },
 ];
 
 export default function ScanningView({ url, progress, currentStep, phase }) {
+  const lottieRef     = useRef(null);
+  const animationRef  = useRef(null);
   const [dots, setDots] = useState('');
 
+  // Animate the ellipsis dots
   useEffect(() => {
     const t = setInterval(() => setDots(d => d.length >= 3 ? '' : d + '.'), 500);
     return () => clearInterval(t);
+  }, []);
+
+  // Mount the Lottie animation
+  useEffect(() => {
+    if (!lottieRef.current) return;
+    animationRef.current = lottie.loadAnimation({
+      container:     lottieRef.current,
+      renderer:      'svg',
+      loop:          true,
+      autoplay:      true,
+      animationData: radarAnimation,
+    });
+    return () => {
+      animationRef.current?.destroy();
+    };
   }, []);
 
   const currentIdx = ALL_STEPS.findIndex(s => s.phase === phase);
 
   return (
     <div className="scanning-view">
-      {/* Left panel — animated radar */}
+      {/* Left panel — Lottie radar */}
       <div className="scanning-left">
-        <div className="radar-wrap">
-          <div className="radar-bg" />
-          {[0,1,2].map(i => (
-            <div key={i} className="radar-ring" style={{ '--delay': `${i * 0.6}s` }} />
-          ))}
-          <div className="radar-sweep" />
-          <div className="radar-center">
-            <div className="radar-dot" />
-          </div>
-          {/* Blips */}
-          <div className="blip blip-1" />
-          <div className="blip blip-2" />
-          <div className="blip blip-3" />
+        <div className="lottie-wrap">
+          <div ref={lottieRef} className="lottie-player" />
         </div>
 
         <div className="scanning-url">
@@ -51,7 +60,7 @@ export default function ScanningView({ url, progress, currentStep, phase }) {
         <div className="progress-wrap">
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${progress}%` }} />
-            <div className="progress-glow" style={{ left: `${progress}%` }} />
+            <div className="progress-glow"  style={{ left:  `${progress}%` }} />
           </div>
           <div className="progress-labels">
             <span className="current-step">{currentStep}{dots}</span>
@@ -67,7 +76,6 @@ export default function ScanningView({ url, progress, currentStep, phase }) {
           {ALL_STEPS.map((step, i) => {
             const done    = currentIdx > i;
             const current = currentIdx === i;
-            const pending = currentIdx < i;
             return (
               <div
                 key={step.phase}
@@ -90,9 +98,7 @@ export default function ScanningView({ url, progress, currentStep, phase }) {
                   <div className="step-phase">{step.phase}</div>
                   <div className="step-label">{step.label}</div>
                 </div>
-                {current && (
-                  <div className="step-badge">Running</div>
-                )}
+                {current && <div className="step-badge">Running</div>}
               </div>
             );
           })}

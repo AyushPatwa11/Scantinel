@@ -9,8 +9,11 @@ const scanRoutes = require('./routes/scans');
 
 const app = express();
 
-// If running behind a proxy (nginx, Docker, cloud), enable trust proxy
-app.set('trust proxy', true);
+// Configure trust proxy. Use explicit 'loopback' by default to avoid a permissive
+// setting while still supporting local proxy setups. Can be overridden with
+// the TRUST_PROXY env var (e.g. '127.0.0.1' or a comma-separated list).
+const TRUST_PROXY = process.env.TRUST_PROXY || 'loopback';
+app.set('trust proxy', TRUST_PROXY);
 
 // ── Security middleware ────────────────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));

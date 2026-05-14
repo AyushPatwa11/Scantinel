@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { startScan, getScans, deleteScan } from '../utils/api';
 import { GRADE_META, formatDate } from '../utils/helpers';
 import { useToast } from '../context/ToastContext';
@@ -7,7 +7,8 @@ import {
   Activity, Clock, AlertTriangle, CheckCircle, Zap,
   Lock, Eye, Server, FileWarning, Wifi, Menu, X, ArrowRight,
   Network, Target, Code2, BarChart2, ShieldCheck, LayoutDashboard,
-  Users, Cpu, Database, Layers, Terminal, ArrowDown, GitBranch
+  Users, Cpu, Database, Layers, Terminal, ArrowDown, GitBranch,
+  History, TrendingUp, ExternalLink
 } from 'lucide-react';
 import './HomePage.css';
 
@@ -232,13 +233,128 @@ function MobileMenu({ open, onClose, onFocusScan }) {
   );
 }
 
-/* ─── Navbar ───────────────────────────────────────────────────────────────── */
-function Navbar({ onFocusScan }) {
-  const [open, setOpen]         = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+/* ─── History Analysis Panel ────────────────────────────────────────────────── */
+function HistoryPanel({ open, onClose, onScanOpen }) {
+  const [scans, setScans]     = useState([]);
+  const [loading, setLoading] = useState(false);
+  const panelRef              = useRef(null);
 
   useEffect(() => {
-    const onKey    = (e) => e.key === 'Escape' && setOpen(false);
+    if (!open) return;
+    setLoading(true);
+    getScans(6)
+      .then(setScans)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [open]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) onClose();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, onClose]);
+
+  const completedCount = scans.filter(s => s.status === 'completed').length;
+  const runningCount   = scans.filter(s => s.status === 'running').length;
+
+  return (
+    <div
+      ref={panelRef}
+      className={`history-panel ${open ? 'history-panel--open' : ''}`}
+    >
+      {/* Panel header */}
+      <div className="hp-header">
+        <div className="hp-header-left">
+          <div className="hp-header-icon"><TrendingUp size={14} /></div>
+          <div>
+            <div className="hp-title">History Analysis</div>
+            <div className="hp-subtitle">Your recent security scans</div>
+          </div>
+        </div>
+        <button className="hp-close" onClick={onClose}><X size={14} /></button>
+      </div>
+
+      {/* Quick stats */}
+      <div className="hp-stats">
+        <div className="hp-stat">
+          <span className="hp-stat-num">{scans.length}</span>
+          <span className="hp-stat-label">Total</span>
+        </div>
+        <div className="hp-stat-sep" />
+        <div className="hp-stat">
+          <span className="hp-stat-num" style={{ color: 'var(--safe)' }}>{completedCount}</span>
+          <span className="hp-stat-label">Done</span>
+        </div>
+        <div className="hp-stat-sep" />
+        <div className="hp-stat">
+          <span className="hp-stat-num" style={{ color: 'var(--accent)' }}>{runningCount}</span>
+          <span className="hp-stat-label">Live</span>
+        </div>
+      </div>
+
+      {/* Scan list */}
+      <div className="hp-list">
+        {loading ? (
+          [1,2,3].map(i => <div key={i} className="hp-skeleton" />)
+        ) : scans.length === 0 ? (
+          <div className="hp-empty">
+            <Shield size={22} />
+            <span>No scans yet. Start your first scan!</span>
+          </div>
+        ) : (
+          scans.map((scan) => {
+            const gm = GRADE_META[scan.summary?.grade] || {};
+            return (
+              <button
+                key={scan.scanId}
+                className="hp-item"
+                onClick={() => { onScanOpen(scan.scanId); onClose(); }}
+              >
+                <div className="hp-item-left">
+                  <div className="hp-item-url">{scan.url}</div>
+                  <div className="hp-item-meta">
+                    <span className={`hp-dot hp-dot-${scan.status}`} />
+                    <span className="hp-item-status">{scan.status}</span>
+                    <span className="hp-item-date">{formatDate(scan.createdAt)}</span>
+                  </div>
+                </div>
+                <div className="hp-item-right">
+                  {scan.summary?.grade && (
+                    <span className="hp-grade" style={{ color: gm.color }}>
+                      {scan.summary.grade}
+                    </span>
+                  )}
+                  <ExternalLink size={11} className="hp-item-arrow" />
+                </div>
+              </button>
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="hp-footer">
+        <button className="hp-footer-btn" onClick={onClose}>
+          <Search size={12} /> New Scan
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Navbar ───────────────────────────────────────────────────────────────── */
+function Navbar({ onFocusScan, onScanStart }) {
+  const [open, setOpen]           = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
+  const [histOpen, setHistOpen]   = useState(false);
+  const histBtnRef                = useRef(null);
+
+  useEffect(() => {
+    const onKey    = (e) => { if (e.key === 'Escape') { setOpen(false); setHistOpen(false); } };
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll);
@@ -247,6 +363,8 @@ function Navbar({ onFocusScan }) {
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
+
+  const closeHist = useCallback(() => setHistOpen(false), []);
 
   return (
     <>
@@ -263,6 +381,26 @@ function Navbar({ onFocusScan }) {
         </div>
 
         <div className="nav-right">
+          {/* History Analysis Button */}
+          <div className="nav-history-wrap" ref={histBtnRef}>
+            <button
+              id="history-analysis-btn"
+              className={`nav-history-btn ${histOpen ? 'nav-history-btn--active' : ''}`}
+              onClick={() => setHistOpen((v) => !v)}
+              title="History Analysis"
+            >
+              <span className="nav-hist-pulse" />
+              <History size={14} />
+              <span className="nav-hist-label">History</span>
+            </button>
+            <HistoryPanel
+              open={histOpen}
+              onClose={closeHist}
+              onScanOpen={onScanStart}
+              onFocusScan={onFocusScan}
+            />
+          </div>
+
           <HamburgerButton open={open} onClick={() => setOpen((v) => !v)} />
           <button className="nav-cta-btn" onClick={onFocusScan}>
             <Search size={13} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
@@ -380,7 +518,7 @@ export default function HomePage({ onScanStart }) {
         </div>
 
         {/* Navbar */}
-        <Navbar onFocusScan={focusScanInput} />
+        <Navbar onFocusScan={focusScanInput} onScanStart={onScanStart} />
 
         {/* Hero */}
         <section className="hero">

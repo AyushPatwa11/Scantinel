@@ -369,7 +369,11 @@ function Navbar({ onFocusScan, onScanStart }) {
   return (
     <>
       <nav className={`home-nav ${scrolled ? 'nav-scrolled' : ''}`}>
-        <div className="nav-brand">
+        <div 
+          className="nav-brand" 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{ cursor: 'pointer' }}
+        >
           <div className="brand-icon"><Shield size={15} /></div>
           <span className="brand-name">Scantinel</span>
         </div>
@@ -446,8 +450,10 @@ function ScanMiniSummary({ summary }) {
 }
 
 /* ─── HomePage ─────────────────────────────────────────────────────────────── */
+let hasPlayedIntro = false;
+
 export default function HomePage({ onScanStart }) {
-  const [introDone, setIntroDone]           = useState(false);
+  const [introDone, setIntroDone]           = useState(hasPlayedIntro);
   const [url, setUrl]                       = useState('');
   const [submitting, setSubmitting]         = useState(false);
   const [error, setError]                   = useState('');
@@ -505,7 +511,7 @@ export default function HomePage({ onScanStart }) {
   return (
     <>
       {/* ── Intro splash — renders until the video ends ── */}
-      {!introDone && <IntroSplash onDone={() => setIntroDone(true)} />}
+      {!introDone && <IntroSplash onDone={() => { setIntroDone(true); hasPlayedIntro = true; }} />}
 
       {/* ── Main site — always in the DOM behind the splash ── */}
       <div className={`home ${introDone ? 'home--visible' : 'home--hidden'}`}>

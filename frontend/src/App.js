@@ -15,6 +15,7 @@ export default function App() {
   function handleBack() {
     setScanId(null);
     setView('home');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   }
 
   return view === 'home'

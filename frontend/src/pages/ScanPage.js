@@ -16,7 +16,12 @@ export default function ScanPage({ scanId, onBack }) {
           <ArrowLeft size={15} />
           <span>Back</span>
         </button>
-        <div className="scan-nav-brand">
+        <div 
+          className="scan-nav-brand" 
+          onClick={onBack}
+          style={{ cursor: 'pointer' }}
+          title="Return to Dashboard"
+        >
           <Shield size={14} color="var(--accent)" />
           <span>Scantinel</span>
         </div>

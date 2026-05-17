@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.REACT_APP_API_URL || '/api',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' }
 });
@@ -21,7 +21,8 @@ export const deleteScan  = (scanId)  => api.delete(`/scans/${scanId}`).then(r =>
 export const getHealth   = ()        => api.get('/health').then(r => r.data);
 
 export function createProgressStream(scanId, { onMessage, onError, onClose } = {}) {
-  const es = new EventSource(`/api/scans/${scanId}/stream`);
+  const baseURL = process.env.REACT_APP_API_URL || '/api';
+  const es = new EventSource(`${baseURL}/scans/${scanId}/stream`);
   es.onmessage = (e) => {
     try {
       const data = JSON.parse(e.data);

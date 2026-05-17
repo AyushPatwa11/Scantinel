@@ -234,7 +234,7 @@ function MobileMenu({ open, onClose, onFocusScan }) {
 }
 
 /* ─── History Analysis Panel ────────────────────────────────────────────────── */
-function HistoryPanel({ open, onClose, onScanOpen }) {
+function HistoryPanel({ open, onClose, onScanOpen, onFocusScan }) {
   const [scans, setScans]     = useState([]);
   const [loading, setLoading] = useState(false);
   const panelRef              = useRef(null);
@@ -338,7 +338,7 @@ function HistoryPanel({ open, onClose, onScanOpen }) {
 
       {/* Footer */}
       <div className="hp-footer">
-        <button className="hp-footer-btn" onClick={onClose}>
+        <button className="hp-footer-btn" onClick={() => { onClose(); onFocusScan?.(); }}>
           <Search size={12} /> New Scan
         </button>
       </div>

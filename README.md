@@ -10,7 +10,7 @@
 ```
 
 ### 🛡️ Security Intelligence Platform `v2.0`
-
+ 
 *Because your website deserves better than "it probably works fine"*
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)

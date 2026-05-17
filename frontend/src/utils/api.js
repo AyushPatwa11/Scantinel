@@ -19,6 +19,7 @@ export const getScan     = (scanId)  => api.get(`/scans/${scanId}`).then(r => r.
 export const getScans    = (limit=10)=> api.get(`/scans?limit=${limit}`).then(r => r.data);
 export const deleteScan  = (scanId)  => api.delete(`/scans/${scanId}`).then(r => r.data);
 export const getHealth   = ()        => api.get('/health').then(r => r.data);
+export const sendChatMessage = (messages) => api.post('/chat', { messages }).then(r => r.data);
 
 export function createProgressStream(scanId, { onMessage, onError, onClose } = {}) {
   const baseURL = process.env.REACT_APP_API_URL || '/api';

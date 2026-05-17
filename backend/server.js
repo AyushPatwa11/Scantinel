@@ -6,8 +6,9 @@ const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 
 const scanRoutes = require('./routes/scans');
+const chatRoutes = require('./routes/chat');
 
-const app = express();
+const app = express(); // trigger restart
 
 // Configure trust proxy. Use explicit 'loopback' by default to avoid a permissive
 // setting while still supporting local proxy setups. Can be overridden with
@@ -45,6 +46,7 @@ app.use('/api/scans', (req, res, next) => {
 
 // ── Routes ─────────────────────────────────────────────────────────────────────
 app.use('/api/scans', scanRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({

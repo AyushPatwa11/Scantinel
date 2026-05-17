@@ -11,6 +11,7 @@ import {
   History, TrendingUp, ExternalLink
 } from 'lucide-react';
 import './HomePage.css';
+import AgentChatbot from '../components/AgentChatbot';
 
 const INTRO_VIDEO =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_155101_f2540600-6fe9-433e-8e48-b3f4b72f0727.mp4';
@@ -535,7 +536,8 @@ export default function HomePage({ onScanStart }) {
 
           <h1 className="hero-title fade-up" style={{ animationDelay: introDone ? '0.2s' : '0s' }}>
             Detect threats<br />
-            <span className="hero-title-accent">before attackers do</span>
+            before<br />
+            <span className="hero-title-accent">attackers do</span>
           </h1>
 
           <p className="hero-subtitle fade-up" style={{ animationDelay: introDone ? '0.3s' : '0s' }}>
@@ -796,6 +798,7 @@ export default function HomePage({ onScanStart }) {
           )}
         </section>
       </div>
+      {introDone && <AgentChatbot />}
     </>
   );
 }

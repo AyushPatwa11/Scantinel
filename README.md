@@ -11,7 +11,7 @@
 
 ### 🛡️ Security Intelligence Platform `v2.0`
  
-*Because your website deserves better than "it probably works fine"*
+*Because your website deserves better than "it probably works fine"* 
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
